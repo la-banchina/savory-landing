@@ -3,877 +3,677 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Savory AI — Your interface, continuously evolving.</title>
+  <title>Savory — Your interface, continuously evolving.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    @font-face { font-family:'ABC Diatype'; src:local('ABCDiatype-Regular'),local('ABC Diatype Regular'); font-weight:400; font-style:normal; }
+    @font-face { font-family:'ABC Diatype'; src:local('ABCDiatype-Medium'),local('ABC Diatype Medium'); font-weight:500; font-style:normal; }
+    @font-face { font-family:'ABC Diatype'; src:local('ABCDiatype-Bold'),local('ABC Diatype Bold'); font-weight:700; font-style:normal; }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 
     :root {
-      --bg:           #070712;
-      --bg2:          #0c0c1e;
-      --purple:       #7c5cf6;
-      --purple-dim:   #9d7eff;
-      --blue:         #4b8af4;
-      --white:        #ffffff;
-      --g1:           #d4d4e8;
-      --g2:           #7c7c9c;
-      --g3:           #1e1e38;
-      --glass:        rgba(255,255,255,0.04);
-      --glass-b:      rgba(255,255,255,0.07);
-      --glass-hi:     rgba(255,255,255,0.11);
-      --grad:         linear-gradient(135deg, #7c5cf6 0%, #4b8af4 100%);
+      --f: 'ABC Diatype', 'Inter', -apple-system, sans-serif;
+      --bg: #07070f;
+      --w:  #ffffff;
+      --g1: #d8d8e8;
+      --g2: #7a7a96;
+      --g3: #30303e;
+      --bd: rgba(255,255,255,0.06);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      color: var(--white);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--w);
+      font-family: var(--f);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
-    /* ─── AMBIENT BACKGROUND ─── */
-    .scene {
-      position: fixed;
-      inset: 0;
+    /* Ambient glow — very restrained */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 1000px 600px at 80% -10%, rgba(60,45,160,0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 700px at -10% 70%,  rgba(30,45,140,0.07) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
-      overflow: hidden;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      will-change: transform;
-      animation: float 12s ease-in-out infinite;
-    }
-    .orb-a {
-      width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(124,92,246,0.18), transparent 65%);
-      top: -250px; right: -180px;
-      animation-delay: 0s;
-    }
-    .orb-b {
-      width: 550px; height: 550px;
-      background: radial-gradient(circle, rgba(75,138,244,0.14), transparent 65%);
-      bottom: 5%; left: -180px;
-      animation-delay: -5s;
-    }
-    .orb-c {
-      width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(157,126,255,0.09), transparent 65%);
-      top: 55%; left: 42%;
-      animation-delay: -9s;
-    }
-    @keyframes float {
-      0%,100% { transform: translateY(0) scale(1); }
-      50%      { transform: translateY(-30px) scale(1.05); }
     }
 
-    /* noise grain overlay */
-    .scene::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.025;
-      pointer-events: none;
-    }
-
-    /* cursor glow */
-    #cglow {
+    /* Cursor glow */
+    #cg {
       position: fixed;
-      width: 500px; height: 500px;
+      width: 600px; height: 600px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(124,92,246,0.06), transparent 60%);
+      background: radial-gradient(circle, rgba(80,60,200,0.04) 0%, transparent 60%);
       pointer-events: none;
       z-index: 1;
       transform: translate(-50%,-50%);
-      transition: left .12s ease, top .12s ease;
+      transition: left .12s linear, top .12s linear;
     }
 
-    /* ─── WRAPPER ─── */
-    .z { position: relative; z-index: 2; }
+    .page { position: relative; z-index: 2; }
 
-    /* ─── NAV ─── */
+    /* ── NAV ── */
     nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 22px 52px;
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      backdrop-filter: blur(24px) saturate(1.6);
-      -webkit-backdrop-filter: blur(24px) saturate(1.6);
-      background: rgba(7,7,18,0.72);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 56px; height: 60px;
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      background: rgba(7,7,15,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .logo {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .nav-logo {
+      font-size: 14.5px; font-weight: 500; letter-spacing: -0.3px;
+      color: rgba(255,255,255,0.9);
     }
-    .nav-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 9px 20px;
-      border-radius: 99px;
-      background: var(--glass);
-      border: 1px solid var(--glass-b);
-      color: var(--g1);
-      font-size: 13px;
-      font-weight: 500;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background .2s, border-color .2s, color .2s;
+    .nav-cta {
+      font-size: 13px; font-weight: 400;
+      color: var(--g2); text-decoration: none;
+      transition: color .15s;
     }
-    .nav-pill:hover {
-      background: rgba(124,92,246,0.14);
-      border-color: rgba(124,92,246,0.38);
-      color: #fff;
-    }
+    .nav-cta:hover { color: var(--w); }
 
-    /* ─── HERO ─── */
+    /* ── HERO ── */
     .hero {
-      min-height: 91vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       text-align: center;
-      padding: 100px 24px 80px;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 14px;
-      border-radius: 99px;
-      background: rgba(124,92,246,0.1);
-      border: 1px solid rgba(124,92,246,0.22);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--purple-dim);
-      margin-bottom: 44px;
-    }
-    .badge-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--purple-dim);
-      animation: pulse 2.2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity:1; transform: scale(1); }
-      50%      { opacity:.4; transform: scale(.75); }
+      padding: 120px 24px 80px;
     }
 
-    h1 {
-      font-size: clamp(52px, 8.5vw, 100px);
-      font-weight: 900;
-      line-height: 1.02;
-      letter-spacing: -4px;
-      max-width: 960px;
-      margin-bottom: 28px;
+    .hero-label {
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 1.8px; text-transform: uppercase;
+      color: var(--g3);
+      margin-bottom: 36px;
     }
-    .gt {
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+
+    .hero h1 {
+      font-size: clamp(44px, 6.5vw, 76px);
+      font-weight: 500;
+      line-height: 1.05;
+      letter-spacing: -3px;
+      color: var(--w);
+      max-width: 820px;
+      margin-bottom: 20px;
     }
+
     .hero-sub {
-      font-size: clamp(16px, 2.2vw, 20px);
+      font-size: 16px;
       color: var(--g2);
-      max-width: 520px;
-      line-height: 1.65;
       font-weight: 400;
-      margin-bottom: 52px;
+      letter-spacing: -0.15px;
+      max-width: 460px;
+      margin-bottom: 40px;
+      line-height: 1.65;
     }
-    .cta-row {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 80px;
-    }
-    .btn-p {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 30px;
-      border-radius: 99px;
-      background: var(--grad);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 40px rgba(124,92,246,.28);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .btn-p:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 70px rgba(124,92,246,.5);
-    }
-    .btn-g {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 99px;
+
+    .hero-btn {
+      display: inline-flex; align-items: center;
+      padding: 11px 22px;
+      border-radius: 7px;
+      border: 1px solid rgba(255,255,255,0.16);
       background: transparent;
       color: var(--g1);
-      font-size: 15px;
-      font-weight: 500;
-      text-decoration: none;
-      border: 1px solid var(--glass-b);
-      cursor: pointer;
-      transition: border-color .2s, color .2s;
+      font-size: 13.5px; font-weight: 400;
+      font-family: var(--f);
+      text-decoration: none; cursor: pointer;
+      letter-spacing: -0.15px;
+      transition: border-color .18s, color .18s, background .18s;
+      margin-bottom: 80px;
     }
-    .btn-g:hover { border-color: rgba(255,255,255,.2); color: #fff; }
-
-    /* ─── HERO PRODUCT PREVIEW ─── */
-    .hero-card {
-      width: 100%;
-      max-width: 820px;
+    .hero-btn:hover {
+      border-color: rgba(255,255,255,0.35);
+      color: var(--w);
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 24px;
-      padding: 36px 32px;
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-      position: relative;
-      overflow: hidden;
     }
-    .hero-card::before {
-      content:'';
-      position: absolute;
-      top:0; left:0; right:0; height:1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent);
-    }
-    .hero-card-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--g2);
-      margin-bottom: 24px;
-    }
-    .pipeline {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .pipe-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 18px 20px;
-      border-radius: 16px;
-      background: rgba(124,92,246,0.08);
-      border: 1px solid rgba(124,92,246,0.18);
-      min-width: 110px;
-      transition: background .25s, transform .25s, border-color .25s;
-      cursor: default;
-    }
-    .pipe-step:hover {
-      background: rgba(124,92,246,0.16);
-      border-color: rgba(124,92,246,0.4);
-      transform: translateY(-5px);
-    }
-    .pipe-step-icon { font-size: 22px; }
-    .pipe-step-name {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--purple-dim);
-      text-align: center;
-      line-height: 1.4;
-    }
-    .pipe-arrow { color: var(--g3); font-size: 18px; flex-shrink: 0; }
 
-    /* ─── GENERIC SECTION ─── */
-    section { padding: 128px 24px; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    .sec-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--purple);
-      text-align: center;
-      margin-bottom: 18px;
+    /* ── PRODUCT MOCKUP ── */
+    .mockup {
+      width: 100%; max-width: 720px;
+      background: #0c0c18;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.02),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 100px rgba(55,40,160,0.05);
     }
-    .sec-title {
-      font-size: clamp(34px, 5vw, 58px);
-      font-weight: 800;
-      line-height: 1.08;
-      letter-spacing: -2.5px;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 16px;
+
+    .mk-bar {
+      display: flex; align-items: center; gap: 7px;
+      padding: 11px 16px;
+      background: #090914;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .sec-sub {
-      font-size: 17px;
+    .mk-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.09); }
+    .mk-url {
+      flex:1; margin-left:8px; height:20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 4px;
+      display: flex; align-items: center;
+      padding: 0 10px; gap: 6px;
+    }
+    .mk-url-dot { width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.1); }
+    .mk-url-txt { font-size:10.5px;color:rgba(255,255,255,0.22);font-family:'SF Mono','Fira Code',monospace; }
+
+    .mk-body { padding: 22px 26px 26px; }
+
+    .mk-input-row { display:flex; align-items:center; gap:9px; margin-bottom:16px; }
+    .mk-input {
+      flex:1; height:34px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:6px;
+      display:flex; align-items:center; padding:0 12px; gap:8px;
+    }
+    .mk-input-icon { width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);flex-shrink:0; }
+    .mk-input-txt { font-size:11px;color:rgba(255,255,255,0.22);font-family:'SF Mono','Fira Code',monospace; }
+    .mk-run {
+      height:34px; padding:0 14px;
+      background:rgba(255,255,255,0.055);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:6px;
+      font-size:11.5px; font-weight:500; color:rgba(255,255,255,0.45);
+      font-family:var(--f); white-space:nowrap;
+    }
+
+    .mk-status {
+      display:flex; align-items:center; gap:9px;
+      padding:11px 13px;
+      background:rgba(255,255,255,0.018);
+      border:1px solid rgba(255,255,255,0.042);
+      border-radius:8px; margin-bottom:16px;
+    }
+    .mk-pulse {
+      width:6px;height:6px;border-radius:50%;
+      background:rgba(100,200,100,0.6);flex-shrink:0;
+      animation: pu 2.4s ease-in-out infinite;
+    }
+    @keyframes pu { 0%,100%{opacity:1} 50%{opacity:.25} }
+    .mk-status-txt { font-size:11.5px;color:rgba(255,255,255,0.3);letter-spacing:-0.1px; }
+    .mk-prog { margin-left:auto;width:100px;height:2px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden; }
+    .mk-prog-fill {
+      height:100%;width:62%;background:rgba(120,100,240,0.4);border-radius:2px;
+      animation:pf 3.8s ease-in-out infinite alternate;
+    }
+    @keyframes pf { from{width:46%} to{width:74%} }
+
+    .mk-rows { display:flex; flex-direction:column; }
+    .mk-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 0;
+      border-bottom:1px solid rgba(255,255,255,0.038);
+    }
+    .mk-row:last-child { border-bottom:none; }
+    .mk-lbl { font-size:11.5px;color:rgba(255,255,255,0.28); }
+    .mk-val { font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.4);font-variant-numeric:tabular-nums; }
+    .mk-val.w { color:rgba(235,140,70,0.6); }
+    .mk-val.g { color:rgba(100,200,100,0.55); }
+
+    /* ── FEATURE SECTIONS ── */
+    .features { padding: 40px 0; }
+
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+      padding: 110px 56px;
+      max-width: 1160px;
+      margin: 0 auto;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .feature.flip .ft { order: 2; }
+    .feature.flip .fv { order: 1; }
+
+    .f-num {
+      font-size: 10.5px; font-weight: 400;
+      letter-spacing: 1.8px; text-transform: uppercase;
+      color: var(--g3); margin-bottom: 20px;
+    }
+    .feature h2 {
+      font-size: clamp(26px, 2.8vw, 38px);
+      font-weight: 500;
+      letter-spacing: -1.8px;
+      line-height: 1.12;
+      color: var(--w);
+      margin-bottom: 16px;
+    }
+    .feature p {
+      font-size: 15px;
       color: var(--g2);
-      text-align: center;
-      max-width: 560px;
-      margin: 0 auto 72px;
-      line-height: 1.65;
+      line-height: 1.72;
       font-weight: 400;
+      max-width: 380px;
+      letter-spacing: -0.1px;
     }
 
-    /* ─── PROBLEM ─── */
-    .prob-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 14px;
-    }
-    .prob-card {
-      padding: 30px;
-      border-radius: 20px;
-      background: var(--glass);
-      border: 1px solid var(--glass-b);
-      backdrop-filter: blur(20px);
-      position: relative;
-      overflow: hidden;
-      transition: background .25s, border-color .25s, transform .25s;
-    }
-    .prob-card::before {
-      content:'';
-      position: absolute;
-      top:0; left:0; right:0; height:1px;
-      background: linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);
-    }
-    .prob-card:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(124,92,246,.28);
-      transform: translateY(-5px);
-    }
-    .prob-num {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: var(--purple);
-      margin-bottom: 18px;
-    }
-    .prob-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
-    .prob-desc  { font-size: 14px; color: var(--g2); line-height: 1.65; }
-
-    /* ─── HOW IT WORKS ─── */
-    .how-wrap {
-      background: linear-gradient(180deg, transparent, rgba(124,92,246,.04), transparent);
-    }
-    .agents {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 2px;
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid var(--glass-b);
-      background: var(--glass-b);
-    }
-    .agent {
-      padding: 36px 24px;
-      background: rgba(7,7,18,.92);
-      transition: background .25s;
-      position: relative;
-    }
-    .agent:hover { background: rgba(124,92,246,.06); }
-    .agent-n {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--purple);
-      margin-bottom: 22px;
-    }
-    .agent-icon { font-size: 26px; display: block; margin-bottom: 14px; }
-    .agent-name { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
-    .agent-desc { font-size: 13px; color: var(--g2); line-height: 1.65; }
-
-    /* ─── FEATURES ─── */
-    .feat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: auto auto;
-      gap: 14px;
-    }
-    .feat-card {
-      padding: 32px;
-      border-radius: 20px;
-      background: var(--glass);
-      border: 1px solid var(--glass-b);
-      backdrop-filter: blur(24px) saturate(1.4);
-      position: relative;
-      overflow: hidden;
-      transition: background .25s, border-color .25s, transform .25s;
-      transform-style: preserve-3d;
-    }
-    .feat-card::before {
-      content:'';
-      position: absolute;
-      top:0; left:0; right:0; height:1px;
-      background: linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
-    }
-    .feat-card:hover {
-      border-color: rgba(124,92,246,.28);
-    }
-    .feat-card.wide {
-      grid-column: span 2;
-      background: rgba(124,92,246,.05);
-      border-color: rgba(124,92,246,.15);
-    }
-    .feat-icon {
-      width: 46px; height: 46px;
-      border-radius: 13px;
-      background: rgba(124,92,246,.14);
-      border: 1px solid rgba(124,92,246,.22);
+    .fv {
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      margin-bottom: 22px;
-    }
-    .feat-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
-    .feat-desc  { font-size: 14px; color: var(--g2); line-height: 1.65; }
-
-    /* ─── PERSONAS ─── */
-    .persona-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
-      gap: 12px;
-    }
-    .persona-card {
-      padding: 28px;
-      border-radius: 20px;
-      background: var(--glass);
-      border: 1px solid var(--glass-b);
-      backdrop-filter: blur(20px);
-      transition: background .25s, border-color .25s, transform .25s;
-      position: relative;
-      overflow: hidden;
-    }
-    .persona-card::after {
-      content:'';
-      position: absolute;
-      bottom:0; left:0; right:0; height: 2px;
-      background: var(--grad);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .3s ease;
-    }
-    .persona-card:hover { background: rgba(255,255,255,.06); transform: translateY(-5px); }
-    .persona-card:hover::after { transform: scaleX(1); }
-    .persona-emoji { font-size: 26px; display: block; margin-bottom: 16px; }
-    .persona-role  { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-    .persona-val   { font-size: 13px; color: var(--g2); line-height: 1.55; }
-
-    /* ─── WAITLIST ─── */
-    .waitlist-wrap {
-      padding: 160px 24px;
-      text-align: center;
-      position: relative;
-    }
-    .wl-glow {
-      position: absolute;
-      width: 700px; height: 500px;
-      background: radial-gradient(ellipse, rgba(124,92,246,.1), transparent 65%);
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      pointer-events: none;
-    }
-    .wl-inner { position: relative; z-index: 2; }
-    .wl-form {
-      display: flex;
-      gap: 10px;
-      max-width: 460px;
-      margin: 0 auto;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .wl-input {
-      flex: 1;
-      min-width: 230px;
-      padding: 14px 22px;
-      border-radius: 99px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.09);
-      color: #fff;
-      font-size: 15px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color .2s, background .2s, box-shadow .2s;
-    }
-    .wl-input::placeholder { color: var(--g2); }
-    .wl-input:focus {
-      border-color: rgba(124,92,246,.5);
-      background: rgba(255,255,255,.07);
-      box-shadow: 0 0 0 3px rgba(124,92,246,.1);
-    }
-    .wl-input.err { border-color: rgba(246,92,92,.5); }
-    .wl-hint { font-size: 13px; color: var(--g2); margin-top: 18px; }
-    .wl-success {
-      display: none;
-      padding: 15px 34px;
-      border-radius: 99px;
-      background: rgba(124,92,246,.14);
-      border: 1px solid rgba(124,92,246,.3);
-      font-size: 15px;
-      color: var(--purple-dim);
-      margin: 0 auto;
-      width: fit-content;
+      min-height: 280px;
     }
 
-    /* ─── FOOTER ─── */
+    /* ── VIZ 1: Heatmap / cursor intelligence ── */
+    .viz-heat {
+      width:100%; max-width:400px; height:270px;
+      position:relative;
+      background: rgba(255,255,255,0.016);
+      border:1px solid rgba(255,255,255,0.046);
+      border-radius:10px; overflow:hidden;
+    }
+    .heat-grid {
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size:36px 36px;
+    }
+    .hblob { position:absolute; border-radius:50%; filter:blur(28px); }
+    .hb1 { width:120px;height:80px;background:rgba(140,105,255,0.1);top:27%;left:17%; }
+    .hb2 { width:90px; height:60px;background:rgba(85,125,255,0.08);top:12%;left:53%; }
+    .hb3 { width:70px; height:52px;background:rgba(160,85,255,0.07);top:56%;left:60%; }
+    .hb4 { width:50px; height:42px;background:rgba(100,145,255,0.07);top:66%;left:28%; }
+    .heat-ui {
+      position:absolute; inset:22px;
+      display:flex; flex-direction:column; gap:9px;
+    }
+    .hb { height:6px;border-radius:3px;background:rgba(255,255,255,0.048); }
+    .hbtn {
+      width:68px; height:22px; margin-top:14px;
+      border-radius:4px;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.065);
+    }
+    .trail { position:absolute; inset:0; pointer-events:none; }
+    .td { position:absolute; border-radius:50%; background:rgba(255,255,255,0.55); }
+    .rip { position:absolute; border-radius:50%; border:1px solid rgba(255,255,255,0.12); }
+
+    /* ── VIZ 2: Agent flow ── */
+    .viz-flow { width:100%; max-width:360px; }
+    .fn { display:flex; align-items:flex-start; gap:14px; }
+    .fn-rail { display:flex; flex-direction:column; align-items:center; width:18px; flex-shrink:0; padding-top:4px; }
+    .fn-c {
+      width:8px;height:8px;border-radius:50%;
+      border:1.5px solid rgba(255,255,255,0.2);
+      background:var(--bg); flex-shrink:0; z-index:1;
+    }
+    .fn-l { width:1px; flex:1; min-height:36px; background:linear-gradient(to bottom,rgba(255,255,255,0.09),rgba(255,255,255,0.025)); }
+    .fn-body { padding:0 0 28px; flex:1; }
+    .fn:last-child .fn-body { padding-bottom:0; }
+    .fn-name { font-size:13px;font-weight:500;color:var(--g1);letter-spacing:-0.3px;margin-bottom:3px; }
+    .fn-desc { font-size:11.5px;color:var(--g3);line-height:1.5; }
+
+    /* ── VIZ 3: Code diff ── */
+    .viz-diff {
+      width:100%; max-width:400px;
+      background:#0b0b17;
+      border:1px solid rgba(255,255,255,0.058);
+      border-radius:10px; overflow:hidden;
+      font-family:'SF Mono','Fira Code',monospace;
+    }
+    .dh {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 16px;
+      background:rgba(255,255,255,0.022);
+      border-bottom:1px solid rgba(255,255,255,0.04);
+    }
+    .dh-f { font-size:11px;color:rgba(255,255,255,0.3);font-family:inherit; }
+    .dh-b {
+      font-size:10px;color:rgba(255,255,255,0.18);
+      padding:2px 7px;border:1px solid rgba(255,255,255,0.065);border-radius:3px;
+    }
+    .dls { padding:9px 0; }
+    .dl { display:flex;gap:9px;padding:2px 16px;font-size:11px;line-height:1.8; }
+    .dl-n { color:rgba(255,255,255,0.1);min-width:22px;text-align:right;user-select:none; }
+    .dl-s { min-width:9px;color:rgba(255,255,255,0.15); }
+    .dl-c { color:rgba(255,255,255,0.34); }
+    .dl.add { background:rgba(80,200,110,0.05); }
+    .dl.add .dl-s { color:rgba(80,200,110,0.5); }
+    .dl.add .dl-c { color:rgba(80,200,110,0.42); }
+    .dl.del { background:rgba(215,70,70,0.045); }
+    .dl.del .dl-s { color:rgba(215,70,70,0.45); }
+    .dl.del .dl-c { color:rgba(215,70,70,0.34);text-decoration:line-through; }
+    .df {
+      display:flex;align-items:center;gap:9px;
+      padding:10px 16px;border-top:1px solid rgba(255,255,255,0.04);
+    }
+    .df-txt { font-size:10.5px;color:rgba(255,255,255,0.2);font-family:var(--f); }
+
+    /* ── WAITLIST ── */
+    #waitlist {
+      padding:150px 56px;
+      text-align:center;
+      border-top:1px solid rgba(255,255,255,0.04);
+    }
+    #waitlist h2 {
+      font-size:clamp(40px,5.5vw,64px);
+      font-weight:500;
+      letter-spacing:-2.5px;
+      color:var(--w);
+      margin-bottom:14px;
+    }
+    .wl-sub { font-size:15px;color:var(--g2);margin-bottom:44px;letter-spacing:-0.15px; }
+    .wl-form { display:flex;gap:9px;max-width:380px;margin:0 auto;flex-wrap:wrap;justify-content:center; }
+    .wl-in {
+      flex:1;min-width:200px;
+      padding:12px 17px;
+      background:rgba(255,255,255,0.038);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:7px;
+      color:var(--w);font-size:13.5px;
+      font-family:var(--f);outline:none;
+      letter-spacing:-0.15px;
+      transition:border-color .18s,background .18s;
+    }
+    .wl-in::placeholder { color:rgba(255,255,255,0.2); }
+    .wl-in:focus { border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.055); }
+    .wl-btn {
+      padding:12px 20px;
+      background:var(--w);border:none;border-radius:7px;
+      color:#07070f;font-size:13.5px;font-weight:600;
+      font-family:var(--f);cursor:pointer;
+      letter-spacing:-0.2px;white-space:nowrap;
+      transition:opacity .16s,transform .14s;
+    }
+    .wl-btn:hover { opacity:.85;transform:translateY(-1px); }
+    .wl-hint { font-size:12px;color:var(--g3);margin-top:14px; }
+    .wl-ok { display:none;font-size:15px;color:var(--g2); }
+
+    /* ── FOOTER ── */
     footer {
-      padding: 36px 52px;
-      border-top: 1px solid rgba(255,255,255,.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:10px;
+      padding:24px 56px;
+      border-top:1px solid rgba(255,255,255,0.04);
     }
-    .foot-copy { font-size: 13px; color: var(--g2); }
-    .foot-links { display: flex; gap: 24px; }
-    .foot-links a { font-size: 13px; color: var(--g2); text-decoration: none; transition: color .2s; }
-    .foot-links a:hover { color: #fff; }
+    .foot-logo { font-size:13.5px;font-weight:500;color:rgba(255,255,255,0.3); }
+    .foot-copy  { font-size:12px;color:rgba(255,255,255,0.16); }
+    .foot-mail  { font-size:12px;color:rgba(255,255,255,0.2);text-decoration:none;transition:color .15s; }
+    .foot-mail:hover { color:rgba(255,255,255,0.45); }
 
-    /* ─── SCROLL ANIMATIONS ─── */
-    .fu { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
-    .fu.vis { opacity: 1; transform: translateY(0); }
+    /* ── REVEAL ── */
+    .r { opacity:0;transform:translateY(16px);transition:opacity .65s ease,transform .65s ease; }
+    .r.in { opacity:1;transform:none; }
 
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 900px) {
-      .agents { grid-template-columns: repeat(3,1fr); }
-      .feat-grid { grid-template-columns: 1fr 1fr; }
-      .feat-card.wide { grid-column: span 2; }
-    }
-    @media (max-width: 640px) {
-      nav { padding: 16px 20px; }
-      section { padding: 88px 20px; }
-      h1 { letter-spacing: -2.5px; }
-      .agents { grid-template-columns: 1fr 1fr; }
-      .feat-grid { grid-template-columns: 1fr; }
-      .feat-card.wide { grid-column: span 1; }
-      footer { padding: 28px 20px; }
+    /* ── RESPONSIVE ── */
+    @media(max-width:800px){
+      nav,footer { padding-left:20px;padding-right:20px; }
+      .hero { padding:100px 20px 60px; }
+      .feature { grid-template-columns:1fr;gap:48px;padding:80px 20px; }
+      .feature.flip .ft { order:1; }
+      .feature.flip .fv { order:2; }
+      #waitlist { padding:100px 20px; }
     }
   </style>
 </head>
 <body>
-
-  <!-- ambient scene -->
-  <div class="scene">
-    <div class="orb orb-a"></div>
-    <div class="orb orb-b"></div>
-    <div class="orb orb-c"></div>
-  </div>
-  <div id="cglow"></div>
-
-  <div class="z">
+  <div id="cg"></div>
+  <div class="page">
 
     <!-- NAV -->
     <nav>
-      <div class="logo">savory</div>
-      <a href="#waitlist" class="nav-pill">Join the waitlist &nbsp;→</a>
+      <span class="nav-logo">savory</span>
+      <a href="#waitlist" class="nav-cta">Join waitlist →</a>
     </nav>
 
     <!-- HERO -->
     <section class="hero">
-      <div class="badge"><div class="badge-dot"></div>Now in early access</div>
+      <p class="hero-label r">UX evolution engine</p>
+      <h1 class="r">Your interface,<br>continuously evolving.</h1>
+      <p class="hero-sub r">AI agents analyse real user behaviour, design better flows, and ship the winner — automatically.</p>
+      <a href="#waitlist" class="hero-btn r">Join the waitlist</a>
 
-      <h1>Your product,<br><span class="gt">always getting better.</span></h1>
-
-      <p class="hero-sub">
-        Savory's AI agents analyse real user behaviour, design optimised interfaces, and ship the winner — automatically. No guesswork. No handoffs.
-      </p>
-
-      <div class="cta-row">
-        <a href="#waitlist" class="btn-p">Get early access</a>
-        <a href="#how" class="btn-g">See how it works ↓</a>
-      </div>
-
-      <!-- Pipeline card -->
-      <div class="hero-card">
-        <div class="hero-card-label">The 5-agent pipeline</div>
-        <div class="pipeline">
-          <div class="pipe-step">
-            <span class="pipe-step-icon">📊</span>
-            <span class="pipe-step-name">Analytics<br>Agent</span>
-          </div>
-          <span class="pipe-arrow">→</span>
-          <div class="pipe-step">
-            <span class="pipe-step-icon">🔍</span>
-            <span class="pipe-step-name">UX Research<br>Agent</span>
-          </div>
-          <span class="pipe-arrow">→</span>
-          <div class="pipe-step">
-            <span class="pipe-step-icon">🎨</span>
-            <span class="pipe-step-name">Designer<br>Agent</span>
-          </div>
-          <span class="pipe-arrow">→</span>
-          <div class="pipe-step">
-            <span class="pipe-step-icon">📈</span>
-            <span class="pipe-step-name">Growth<br>Agent</span>
-          </div>
-          <span class="pipe-arrow">→</span>
-          <div class="pipe-step">
-            <span class="pipe-step-icon">⚡</span>
-            <span class="pipe-step-name">Fullstack<br>Agent</span>
+      <!-- Product mockup -->
+      <div class="mockup r">
+        <div class="mk-bar">
+          <div class="mk-dot"></div><div class="mk-dot"></div><div class="mk-dot"></div>
+          <div class="mk-url">
+            <div class="mk-url-dot"></div>
+            <span class="mk-url-txt">savory.ai/analysis</span>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- PROBLEM -->
-    <section id="problem">
-      <div class="container">
-        <p class="sec-label">The Problem</p>
-        <h2 class="sec-title">Most product teams are flying blind.</h2>
-        <p class="sec-sub">Without the right infrastructure, teams rely on intuition over insight — and lose to competitors who ship faster.</p>
-        <div class="prob-grid">
-          <div class="prob-card fu">
-            <div class="prob-num">01</div>
-            <div class="prob-title">No clarity on what's failing</div>
-            <div class="prob-desc">Teams miss clear signals on which features matter and how users actually interact with their product.</div>
+        <div class="mk-body">
+          <div class="mk-input-row">
+            <div class="mk-input">
+              <div class="mk-input-icon"></div>
+              <span class="mk-input-txt">https://yourapp.com/checkout</span>
+            </div>
+            <div class="mk-run">Analyse</div>
           </div>
-          <div class="prob-card fu">
-            <div class="prob-num">02</div>
-            <div class="prob-title">Fragmented, unreadable data</div>
-            <div class="prob-desc">Analytics are scattered across tools, hard to interpret, and rarely connected to real UX outcomes.</div>
+          <div class="mk-status">
+            <div class="mk-pulse"></div>
+            <span class="mk-status-txt">Analysing user flows — collecting behavioural signals...</span>
+            <div class="mk-prog"><div class="mk-prog-fill"></div></div>
           </div>
-          <div class="prob-card fu">
-            <div class="prob-num">03</div>
-            <div class="prob-title">UX expertise is expensive</div>
-            <div class="prob-desc">Most companies can't staff full UX research, design, and data science teams to continuously iterate.</div>
-          </div>
-          <div class="prob-card fu">
-            <div class="prob-num">04</div>
-            <div class="prob-title">Decisions built on assumptions</div>
-            <div class="prob-desc">Without systematic analysis, product decisions rely on intuition — wasting time and losing revenue.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section id="how" class="how-wrap">
-      <div class="container">
-        <p class="sec-label">How It Works</p>
-        <h2 class="sec-title">Five agents.<br>One seamless loop.</h2>
-        <p class="sec-sub">What used to take weeks of cross-functional effort now runs end-to-end — from raw behaviour data to a deployed, better-performing interface.</p>
-        <div class="agents fu">
-          <div class="agent">
-            <div class="agent-n">01</div>
-            <span class="agent-icon">📊</span>
-            <div class="agent-name">Analytics Agent</div>
-            <div class="agent-desc">Dives into behavioural data to identify friction points, drop-offs, and patterns humans would miss.</div>
-          </div>
-          <div class="agent">
-            <div class="agent-n">02</div>
-            <span class="agent-icon">🔍</span>
-            <div class="agent-name">UX Researcher</div>
-            <div class="agent-desc">Synthesises insights into targeted design suggestions based on where users actually struggle.</div>
-          </div>
-          <div class="agent">
-            <div class="agent-n">03</div>
-            <span class="agent-icon">🎨</span>
-            <div class="agent-name">Product Designer</div>
-            <div class="agent-desc">Creates multiple optimised interface variations, each engineered around a specific friction point.</div>
-          </div>
-          <div class="agent">
-            <div class="agent-n">04</div>
-            <span class="agent-icon">📈</span>
-            <div class="agent-name">Growth Agent</div>
-            <div class="agent-desc">Tests each variation with real users, measures performance, and identifies the winning interface.</div>
-          </div>
-          <div class="agent">
-            <div class="agent-n">05</div>
-            <span class="agent-icon">⚡</span>
-            <div class="agent-name">Fullstack Agent</div>
-            <div class="agent-desc">Generates production-ready code, opens a pull request, and deploys the best performer.</div>
+          <div class="mk-rows">
+            <div class="mk-row">
+              <span class="mk-lbl">Drop-off at checkout step 3</span>
+              <span class="mk-val w">67% exit rate</span>
+            </div>
+            <div class="mk-row">
+              <span class="mk-lbl">Avg. hesitation before CTA</span>
+              <span class="mk-val w">4.2s median</span>
+            </div>
+            <div class="mk-row">
+              <span class="mk-lbl">Scroll depth, pricing section</span>
+              <span class="mk-val">38%</span>
+            </div>
+            <div class="mk-row">
+              <span class="mk-lbl">Session completion after optimisation</span>
+              <span class="mk-val g">+12%</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- FEATURES -->
-    <section id="features">
-      <div class="container">
-        <p class="sec-label">The Platform</p>
-        <h2 class="sec-title">Everything you need.<br>Nothing you don't.</h2>
-        <p class="sec-sub">A focused toolkit that covers the full improvement cycle — from first insight to live code.</p>
-        <div class="feat-grid">
+    <div class="features">
 
-          <!-- wide card -->
-          <div class="feat-card wide fu">
-            <div class="feat-icon">🔄</div>
-            <div class="feat-title">Behavioural Feedback Loop</div>
-            <div class="feat-desc">Savory captures micro-behaviours traditional analysts miss — mouse hesitation indicating confusion, scroll velocity revealing frustration, click patterns exposing decision friction, form abandonment surfacing broken flows. Every interaction is a data point. Every data point is an opportunity.</div>
-          </div>
-
-          <div class="feat-card fu">
-            <div class="feat-icon">🎯</div>
-            <div class="feat-title">Interface Optimisation</div>
-            <div class="feat-desc">AI-driven recommendations for your UI, layouts, and conversion paths — grounded entirely in how your actual users behave.</div>
-          </div>
-
-          <div class="feat-card fu">
-            <div class="feat-icon">🗺️</div>
-            <div class="feat-title">User Flow Analysis</div>
-            <div class="feat-desc">Deep navigation analysis that surfaces drop-offs, dead ends, and hidden friction before they cost you customers.</div>
-          </div>
-
-          <div class="feat-card fu">
-            <div class="feat-icon">🧪</div>
-            <div class="feat-title">The Lab</div>
-            <div class="feat-desc">An experimental space for testing design variations and new ideas before they go live to your full audience.</div>
-          </div>
-
-          <div class="feat-card fu">
-            <div class="feat-icon">📡</div>
-            <div class="feat-title">Behavioural Data Capture</div>
-            <div class="feat-desc">A lightweight Chrome extension that auto-captures clicks, screenshots, and navigation in real time — zero manual setup.</div>
-          </div>
-
-          <div class="feat-card fu">
-            <div class="feat-icon">🤝</div>
-            <div class="feat-title">AI Sparring Partner</div>
-            <div class="feat-desc">More than a dashboard — a knowledgeable collaborator that proposes solutions tailored to your product goals and industry.</div>
-          </div>
-
+      <!-- 01 -->
+      <div class="feature">
+        <div class="ft r">
+          <p class="f-num">01 — Behavioural intelligence</p>
+          <h2>Reads what your users can't say.</h2>
+          <p>Savory tracks mouse hesitation, scroll depth, rage clicks, and micro-pauses — the signals that reveal confusion long before a user drops off. Traditional analytics tell you what happened. Savory tells you why.</p>
         </div>
-      </div>
-    </section>
-
-    <!-- WHO IT'S FOR -->
-    <section id="personas">
-      <div class="container">
-        <p class="sec-label">Who It's For</p>
-        <h2 class="sec-title">Built for every role<br>on the product team.</h2>
-        <p class="sec-sub">Whether you're shipping code or setting strategy, Savory gives you exactly what you need — and nothing you don't.</p>
-        <div class="persona-grid">
-          <div class="persona-card fu">
-            <span class="persona-emoji">📊</span>
-            <div class="persona-role">B2B SaaS Teams</div>
-            <div class="persona-val">Turns raw analytics into "here's what's broken, here's how to fix it" — no data scientist required.</div>
-          </div>
-          <div class="persona-card fu">
-            <span class="persona-emoji">🎨</span>
-            <div class="persona-role">Product Designers</div>
-            <div class="persona-val">Auto-generated design variations matching your system. One-click prototyping, backed by real data.</div>
-          </div>
-          <div class="persona-card fu">
-            <span class="persona-emoji">📋</span>
-            <div class="persona-role">Product Managers</div>
-            <div class="persona-val">Quantitative data AND the human reason behind it — side by side, with session replays to explain the why.</div>
-          </div>
-          <div class="persona-card fu">
-            <span class="persona-emoji">📈</span>
-            <div class="persona-role">Managers & Execs</div>
-            <div class="persona-val">A single dashboard with clear ROI and one-click A/B test initiation. Decisions in minutes, not weeks.</div>
-          </div>
-          <div class="persona-card fu">
-            <span class="persona-emoji">⚙️</span>
-            <div class="persona-role">Software Engineers</div>
-            <div class="persona-val">See exactly what users think — and receive automated PRs with production-ready improvements ready to review.</div>
+        <div class="fv r">
+          <div class="viz-heat">
+            <div class="heat-grid"></div>
+            <div class="hblob hb1"></div>
+            <div class="hblob hb2"></div>
+            <div class="hblob hb3"></div>
+            <div class="hblob hb4"></div>
+            <div class="heat-ui">
+              <div class="hb" style="width:40%"></div>
+              <div class="hb" style="width:66%"></div>
+              <div class="hb" style="width:52%;margin-top:16px"></div>
+              <div class="hb" style="width:28%;margin-top:5px"></div>
+              <div class="hbtn"></div>
+            </div>
+            <div class="trail">
+              <div class="td" style="width:3px;height:3px;top:37%;left:16%;opacity:.75"></div>
+              <div class="td" style="width:3px;height:3px;top:39%;left:20%;opacity:.64"></div>
+              <div class="td" style="width:4px;height:4px;top:41%;left:25%;opacity:.53"></div>
+              <div class="td" style="width:4px;height:4px;top:42%;left:30%;opacity:.43"></div>
+              <div class="td" style="width:5px;height:5px;top:41%;left:36%;opacity:.36"></div>
+              <div class="td" style="width:4px;height:4px;top:39%;left:42%;opacity:.27"></div>
+              <div class="td" style="width:3px;height:3px;top:38%;left:47%;opacity:.2"></div>
+              <div class="rip" style="top:40%;left:37%;width:16px;height:16px;transform:translate(-50%,-50%)"></div>
+              <div class="rip" style="top:40%;left:37%;width:27px;height:27px;transform:translate(-50%,-50%);border-color:rgba(255,255,255,0.06)"></div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+
+      <!-- 02 -->
+      <div class="feature flip">
+        <div class="fv r">
+          <div class="viz-flow">
+            <div class="fn">
+              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
+              <div class="fn-body">
+                <div class="fn-name">Analytics Agent</div>
+                <div class="fn-desc">Identifies friction, drop-offs, and behavioural patterns</div>
+              </div>
+            </div>
+            <div class="fn">
+              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
+              <div class="fn-body">
+                <div class="fn-name">UX Research Agent</div>
+                <div class="fn-desc">Synthesises insights into targeted design hypotheses</div>
+              </div>
+            </div>
+            <div class="fn">
+              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
+              <div class="fn-body">
+                <div class="fn-name">Product Designer Agent</div>
+                <div class="fn-desc">Generates optimised interface variations per friction point</div>
+              </div>
+            </div>
+            <div class="fn">
+              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
+              <div class="fn-body">
+                <div class="fn-name">Growth Agent</div>
+                <div class="fn-desc">Tests each variation with real users, finds the winner</div>
+              </div>
+            </div>
+            <div class="fn">
+              <div class="fn-rail"><div class="fn-c" style="border-color:rgba(255,255,255,0.36)"></div></div>
+              <div class="fn-body">
+                <div class="fn-name">Fullstack Agent</div>
+                <div class="fn-desc">Ships the winner — production code, PR, deployment</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ft r">
+          <p class="f-num">02 — Five agents, one loop</p>
+          <h2>A full product team that never sleeps.</h2>
+          <p>Five specialised AI agents work in sequence, each passing findings downstream. What used to require weeks of cross-functional effort — research, design, testing, engineering — now runs end-to-end without a single handoff.</p>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="feature">
+        <div class="ft r">
+          <p class="f-num">03 — From insight to code</p>
+          <h2>Deployed before your next standup.</h2>
+          <p>Savory doesn't stop at recommendations. It generates production-ready code, opens a pull request, and deploys the winning interface directly. The loop closes automatically.</p>
+        </div>
+        <div class="fv r">
+          <div class="viz-diff">
+            <div class="dh">
+              <span class="dh-f">components/CheckoutFlow.tsx</span>
+              <span class="dh-b">savory/optimise-checkout-v3</span>
+            </div>
+            <div class="dls">
+              <div class="dl">
+                <span class="dl-n">14</span><span class="dl-s"> </span>
+                <span class="dl-c">const CTA = styled.button`</span>
+              </div>
+              <div class="dl del">
+                <span class="dl-n">15</span><span class="dl-s">−</span>
+                <span class="dl-c">  padding: 10px 18px;</span>
+              </div>
+              <div class="dl del">
+                <span class="dl-n">16</span><span class="dl-s">−</span>
+                <span class="dl-c">  font-size: 13px;</span>
+              </div>
+              <div class="dl add">
+                <span class="dl-n">15</span><span class="dl-s">+</span>
+                <span class="dl-c">  padding: 14px 28px;</span>
+              </div>
+              <div class="dl add">
+                <span class="dl-n">16</span><span class="dl-s">+</span>
+                <span class="dl-c">  font-size: 16px; font-weight: 600;</span>
+              </div>
+              <div class="dl">
+                <span class="dl-n">17</span><span class="dl-s"> </span>
+                <span class="dl-c">  border-radius: 8px;</span>
+              </div>
+            </div>
+            <div class="df">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="opacity:.3;flex-shrink:0">
+                <circle cx="4" cy="4" r="2.5" stroke="white" stroke-width="1.3"/>
+                <circle cx="12" cy="12" r="2.5" stroke="white" stroke-width="1.3"/>
+                <path d="M4 6.5v1.5a4 4 0 004 4h4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+              <span class="df-txt">PR #47 — Checkout CTA optimisation · +12% conversion · Ready to merge</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
 
     <!-- WAITLIST -->
-    <section id="waitlist" class="waitlist-wrap">
-      <div class="wl-glow"></div>
-      <div class="wl-inner">
-        <p class="sec-label">Early Access</p>
-        <h2 class="sec-title" style="max-width:620px; margin-left:auto; margin-right:auto;">
-          Be first to build products<br>that improve themselves.
-        </h2>
-        <p class="sec-sub" style="margin-bottom:44px;">
-          Join the waitlist and get early access to Savory as we roll out to select teams.
-        </p>
-        <div class="wl-form" id="wlForm">
-          <input id="wlEmail" type="email" class="wl-input" placeholder="your@company.com">
-          <button class="btn-p" onclick="submitWL()">Get early access</button>
-        </div>
-        <div class="wl-success" id="wlOk">✓ You're on the list — we'll be in touch soon.</div>
-        <p class="wl-hint">No spam. Early access only. Unsubscribe anytime.</p>
+    <section id="waitlist">
+      <h2 class="r">Be the first.</h2>
+      <p class="wl-sub r">Join the waitlist. Rolling out to select teams early.</p>
+      <div class="wl-form r" id="wlForm">
+        <input id="wlEmail" type="email" class="wl-in" placeholder="your@company.com">
+        <button class="wl-btn" onclick="sub()">Get early access</button>
       </div>
+      <p class="wl-ok r" id="wlOk">You're on the list — we'll be in touch.</p>
+      <p class="wl-hint">No spam. Early access only.</p>
     </section>
 
     <!-- FOOTER -->
     <footer>
-      <div class="logo">savory</div>
-      <div class="foot-copy">© 2025 Savory AI. All rights reserved.</div>
-      <div class="foot-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="mailto:contact@savory.ai">contact@savory.ai</a>
-      </div>
+      <span class="foot-logo">savory</span>
+      <span class="foot-copy">© 2025 Savory AI</span>
+      <a href="mailto:contact@savory.ai" class="foot-mail">contact@savory.ai</a>
     </footer>
 
-  </div><!-- /z -->
+  </div>
 
   <script>
-    /* cursor glow */
-    const cg = document.getElementById('cglow');
+    // cursor glow
+    const cg = document.getElementById('cg');
     window.addEventListener('mousemove', e => {
       cg.style.left = e.clientX + 'px';
       cg.style.top  = e.clientY + 'px';
     });
 
-    /* scroll fade-up */
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('vis'); });
+    // scroll reveal with stagger
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
     }, { threshold: 0.1 });
-    document.querySelectorAll('.fu').forEach(el => obs.observe(el));
-
-    /* stagger grid children */
-    document.querySelectorAll('.prob-grid, .feat-grid, .persona-grid').forEach(g => {
-      g.querySelectorAll('.fu').forEach((c, i) => { c.style.transitionDelay = i * 75 + 'ms'; });
+    document.querySelectorAll('.r').forEach((el, i) => {
+      el.style.transitionDelay = (i % 3) * 60 + 'ms';
+      io.observe(el);
     });
 
-    /* card 3-D tilt */
-    document.querySelectorAll('.feat-card, .prob-card, .persona-card, .pipe-step').forEach(card => {
-      card.addEventListener('mousemove', e => {
-        const r = card.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width  - 0.5) * 12;
-        const y = ((e.clientY - r.top)  / r.height - 0.5) * 12;
-        card.style.transform = `translateY(-5px) rotateX(${-y}deg) rotateY(${x}deg)`;
-      });
-      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-    });
-
-    /* waitlist */
-    function submitWL() {
+    // waitlist
+    function sub() {
       const inp = document.getElementById('wlEmail');
-      const val = inp.value.trim();
-      if (!val || !val.includes('@') || !val.includes('.')) {
-        inp.classList.add('err');
+      const v = inp.value.trim();
+      if (!v || !v.includes('@') || !v.includes('.')) {
+        inp.style.borderColor = 'rgba(210,70,70,.4)';
         inp.focus();
-        setTimeout(() => inp.classList.remove('err'), 1800);
+        setTimeout(() => inp.style.borderColor = '', 1600);
         return;
       }
       document.getElementById('wlForm').style.display = 'none';
-      document.getElementById('wlOk').style.display   = 'block';
+      document.getElementById('wlOk').style.display = 'block';
     }
     document.getElementById('wlEmail').addEventListener('keydown', e => {
-      if (e.key === 'Enter') submitWL();
+      if (e.key === 'Enter') sub();
     });
   </script>
 </body>
