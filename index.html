@@ -319,41 +319,40 @@
     .fn-name { font-size:13px;font-weight:500;color:var(--g1);letter-spacing:-0.3px;margin-bottom:3px; }
     .fn-desc { font-size:11.5px;color:var(--g3);line-height:1.5; }
 
-    /* ── VIZ 3: Code diff ── */
-    .viz-diff {
-      width:100%; max-width:400px;
-      background:#0b0b17;
-      border:1px solid rgba(255,255,255,0.058);
-      border-radius:10px; overflow:hidden;
-      font-family:'SF Mono','Fira Code',monospace;
+    /* ── VIZ 3: User flow funnel ── */
+    .viz-funnel { width:100%; max-width:400px; display:flex; flex-direction:column; gap:6px; }
+    .funnel-step {
+      display:flex; align-items:center; gap:14px;
+      padding:12px 16px;
+      border:1px solid rgba(255,255,255,0.055);
+      border-radius:8px;
+      background:rgba(255,255,255,0.018);
+      position:relative; overflow:hidden;
     }
-    .dh {
-      display:flex;align-items:center;justify-content:space-between;
-      padding:10px 16px;
-      background:rgba(255,255,255,0.022);
-      border-bottom:1px solid rgba(255,255,255,0.04);
+    .funnel-step.friction {
+      border-color:rgba(220,100,80,0.25);
+      background:rgba(220,100,80,0.04);
     }
-    .dh-f { font-size:11px;color:rgba(255,255,255,0.3);font-family:inherit; }
-    .dh-b {
-      font-size:10px;color:rgba(255,255,255,0.18);
-      padding:2px 7px;border:1px solid rgba(255,255,255,0.065);border-radius:3px;
+    .funnel-bar {
+      position:absolute; left:0; top:0; bottom:0;
+      background:rgba(255,255,255,0.035);
+      border-radius:8px 0 0 8px;
+      transition:width .4s ease;
     }
-    .dls { padding:9px 0; }
-    .dl { display:flex;gap:9px;padding:2px 16px;font-size:11px;line-height:1.8; }
-    .dl-n { color:rgba(255,255,255,0.1);min-width:22px;text-align:right;user-select:none; }
-    .dl-s { min-width:9px;color:rgba(255,255,255,0.15); }
-    .dl-c { color:rgba(255,255,255,0.34); }
-    .dl.add { background:rgba(80,200,110,0.05); }
-    .dl.add .dl-s { color:rgba(80,200,110,0.5); }
-    .dl.add .dl-c { color:rgba(80,200,110,0.42); }
-    .dl.del { background:rgba(215,70,70,0.045); }
-    .dl.del .dl-s { color:rgba(215,70,70,0.45); }
-    .dl.del .dl-c { color:rgba(215,70,70,0.34);text-decoration:line-through; }
-    .df {
-      display:flex;align-items:center;gap:9px;
-      padding:10px 16px;border-top:1px solid rgba(255,255,255,0.04);
+    .funnel-step.friction .funnel-bar { background:rgba(220,100,80,0.07); }
+    .funnel-step-name { font-size:12px; color:rgba(255,255,255,0.45); position:relative; z-index:1; flex:1; letter-spacing:-0.1px; }
+    .funnel-step.friction .funnel-step-name { color:rgba(255,180,160,0.7); }
+    .funnel-pct { font-size:12px; font-weight:500; color:rgba(255,255,255,0.3); position:relative; z-index:1; font-variant-numeric:tabular-nums; }
+    .funnel-step.friction .funnel-pct { color:rgba(220,100,80,0.7); }
+    .funnel-drop {
+      font-size:10.5px; color:rgba(220,100,80,0.55);
+      position:relative; z-index:1; white-space:nowrap;
     }
-    .df-txt { font-size:10.5px;color:rgba(255,255,255,0.2);font-family:var(--f); }
+    .funnel-connector {
+      width:1px; height:6px;
+      background:rgba(255,255,255,0.06);
+      margin:0 auto;
+    }
 
     /* ── WAITLIST ── */
     #waitlist {
@@ -574,49 +573,42 @@
       <!-- 03 -->
       <div class="feature">
         <div class="ft r">
-          <p class="f-num">03 — From insight to code</p>
-          <h2>Deployed before your next standup.</h2>
-          <p>Savory doesn't stop at recommendations. It generates production-ready code, opens a pull request, and deploys the winning interface directly. The loop closes automatically.</p>
+          <p class="f-num">03 — Flow optimisation</p>
+          <h2>See exactly where your users get stuck.</h2>
+          <p>Grounded in UX principles and behavioural science, Savory maps the real journey through your product — identifying the precise steps where momentum breaks down, attention drops, and users abandon. Then it fixes them.</p>
         </div>
         <div class="fv r">
-          <div class="viz-diff">
-            <div class="dh">
-              <span class="dh-f">components/CheckoutFlow.tsx</span>
-              <span class="dh-b">savory/optimise-checkout-v3</span>
+          <div class="viz-funnel">
+            <div class="funnel-step" style="--w:100%">
+              <div class="funnel-bar" style="width:100%"></div>
+              <span class="funnel-step-name">Landing page</span>
+              <span class="funnel-pct">100%</span>
             </div>
-            <div class="dls">
-              <div class="dl">
-                <span class="dl-n">14</span><span class="dl-s"> </span>
-                <span class="dl-c">const CTA = styled.button`</span>
-              </div>
-              <div class="dl del">
-                <span class="dl-n">15</span><span class="dl-s">−</span>
-                <span class="dl-c">  padding: 10px 18px;</span>
-              </div>
-              <div class="dl del">
-                <span class="dl-n">16</span><span class="dl-s">−</span>
-                <span class="dl-c">  font-size: 13px;</span>
-              </div>
-              <div class="dl add">
-                <span class="dl-n">15</span><span class="dl-s">+</span>
-                <span class="dl-c">  padding: 14px 28px;</span>
-              </div>
-              <div class="dl add">
-                <span class="dl-n">16</span><span class="dl-s">+</span>
-                <span class="dl-c">  font-size: 16px; font-weight: 600;</span>
-              </div>
-              <div class="dl">
-                <span class="dl-n">17</span><span class="dl-s"> </span>
-                <span class="dl-c">  border-radius: 8px;</span>
-              </div>
+            <div class="funnel-connector"></div>
+            <div class="funnel-step" style="">
+              <div class="funnel-bar" style="width:78%"></div>
+              <span class="funnel-step-name">Product page</span>
+              <span class="funnel-pct">78%</span>
             </div>
-            <div class="df">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="opacity:.3;flex-shrink:0">
-                <circle cx="4" cy="4" r="2.5" stroke="white" stroke-width="1.3"/>
-                <circle cx="12" cy="12" r="2.5" stroke="white" stroke-width="1.3"/>
-                <path d="M4 6.5v1.5a4 4 0 004 4h4" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-              </svg>
-              <span class="df-txt">PR #47 — Checkout CTA optimisation · +12% conversion · Ready to merge</span>
+            <div class="funnel-connector"></div>
+            <div class="funnel-step friction">
+              <div class="funnel-bar" style="width:43%"></div>
+              <span class="funnel-step-name">Add to cart</span>
+              <span class="funnel-pct">43%</span>
+              <span class="funnel-drop">−35% drop</span>
+            </div>
+            <div class="funnel-connector"></div>
+            <div class="funnel-step friction">
+              <div class="funnel-bar" style="width:19%"></div>
+              <span class="funnel-step-name">Checkout</span>
+              <span class="funnel-pct">19%</span>
+              <span class="funnel-drop">−24% drop</span>
+            </div>
+            <div class="funnel-connector"></div>
+            <div class="funnel-step" style="">
+              <div class="funnel-bar" style="width:14%"></div>
+              <span class="funnel-step-name">Purchase complete</span>
+              <span class="funnel-pct">14%</span>
             </div>
           </div>
         </div>
