@@ -304,20 +304,26 @@
     .td { position:absolute; border-radius:50%; background:rgba(255,255,255,0.55); }
     .rip { position:absolute; border-radius:50%; border:1px solid rgba(255,255,255,0.12); }
 
-    /* ── VIZ 2: Agent flow ── */
-    .viz-flow { width:100%; max-width:360px; }
-    .fn { display:flex; align-items:flex-start; gap:14px; }
-    .fn-rail { display:flex; flex-direction:column; align-items:center; width:18px; flex-shrink:0; padding-top:4px; }
-    .fn-c {
-      width:8px;height:8px;border-radius:50%;
+    /* ── VIZ 2: Scoring criteria ── */
+    .viz-score { width:100%; max-width:380px; }
+    .sc-row { display:flex; align-items:flex-start; gap:14px; }
+    .sc-rail { display:flex; flex-direction:column; align-items:center; width:18px; flex-shrink:0; padding-top:5px; }
+    .sc-dot {
+      width:8px; height:8px; border-radius:50%;
       border:1.5px solid rgba(255,255,255,0.2);
       background:var(--bg); flex-shrink:0; z-index:1;
     }
-    .fn-l { width:1px; flex:1; min-height:36px; background:linear-gradient(to bottom,rgba(255,255,255,0.09),rgba(255,255,255,0.025)); }
-    .fn-body { padding:0 0 28px; flex:1; }
-    .fn:last-child .fn-body { padding-bottom:0; }
-    .fn-name { font-size:13px;font-weight:500;color:var(--g1);letter-spacing:-0.3px;margin-bottom:3px; }
-    .fn-desc { font-size:11.5px;color:var(--g3);line-height:1.5; }
+    .sc-dot.warn { border-color:rgba(220,130,80,0.5); }
+    .sc-line { width:1px; flex:1; min-height:32px; background:linear-gradient(to bottom,rgba(255,255,255,0.08),rgba(255,255,255,0.02)); }
+    .sc-body { padding:0 0 24px; flex:1; }
+    .sc-row:last-child .sc-body { padding-bottom:0; }
+    .sc-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+    .sc-name { font-size:13px; font-weight:500; color:var(--g1); letter-spacing:-0.3px; }
+    .sc-num { font-size:12px; font-weight:500; color:rgba(255,255,255,0.35); font-variant-numeric:tabular-nums; }
+    .sc-num.warn { color:rgba(220,130,80,0.65); }
+    .sc-bar { height:2px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; }
+    .sc-fill { height:100%; border-radius:2px; background:rgba(255,255,255,0.22); }
+    .sc-fill.warn { background:rgba(220,130,80,0.45); }
 
     /* ── VIZ 3: User flow funnel ── */
     .viz-funnel { width:100%; max-width:400px; display:flex; flex-direction:column; gap:6px; }
@@ -525,48 +531,63 @@
       <!-- 02 -->
       <div class="feature flip">
         <div class="fv r">
-          <div class="viz-flow">
-            <div class="fn">
-              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
-              <div class="fn-body">
-                <div class="fn-name">Analytics Agent</div>
-                <div class="fn-desc">Identifies friction, drop-offs, and behavioural patterns</div>
+          <div class="viz-score">
+            <div class="sc-row">
+              <div class="sc-rail"><div class="sc-dot"></div><div class="sc-line"></div></div>
+              <div class="sc-body">
+                <div class="sc-top">
+                  <span class="sc-name">UX Behaviour</span>
+                  <span class="sc-num">81</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill" style="width:81%"></div></div>
               </div>
             </div>
-            <div class="fn">
-              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
-              <div class="fn-body">
-                <div class="fn-name">UX Research Agent</div>
-                <div class="fn-desc">Synthesises insights into targeted design hypotheses</div>
+            <div class="sc-row">
+              <div class="sc-rail"><div class="sc-dot warn"></div><div class="sc-line"></div></div>
+              <div class="sc-body">
+                <div class="sc-top">
+                  <span class="sc-name">UI Clarity</span>
+                  <span class="sc-num warn">47</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill warn" style="width:47%"></div></div>
               </div>
             </div>
-            <div class="fn">
-              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
-              <div class="fn-body">
-                <div class="fn-name">Product Designer Agent</div>
-                <div class="fn-desc">Generates optimised interface variations per friction point</div>
+            <div class="sc-row">
+              <div class="sc-rail"><div class="sc-dot"></div><div class="sc-line"></div></div>
+              <div class="sc-body">
+                <div class="sc-top">
+                  <span class="sc-name">Conversion Impact</span>
+                  <span class="sc-num">68</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill" style="width:68%"></div></div>
               </div>
             </div>
-            <div class="fn">
-              <div class="fn-rail"><div class="fn-c"></div><div class="fn-l"></div></div>
-              <div class="fn-body">
-                <div class="fn-name">Growth Agent</div>
-                <div class="fn-desc">Tests each variation with real users, finds the winner</div>
+            <div class="sc-row">
+              <div class="sc-rail"><div class="sc-dot warn"></div><div class="sc-line"></div></div>
+              <div class="sc-body">
+                <div class="sc-top">
+                  <span class="sc-name">Accessibility</span>
+                  <span class="sc-num warn">39</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill warn" style="width:39%"></div></div>
               </div>
             </div>
-            <div class="fn">
-              <div class="fn-rail"><div class="fn-c" style="border-color:rgba(255,255,255,0.36)"></div></div>
-              <div class="fn-body">
-                <div class="fn-name">Fullstack Agent</div>
-                <div class="fn-desc">Ships the winner — production code, PR, deployment</div>
+            <div class="sc-row">
+              <div class="sc-rail"><div class="sc-dot" style="border-color:rgba(255,255,255,0.35)"></div></div>
+              <div class="sc-body">
+                <div class="sc-top">
+                  <span class="sc-name">Flow Efficiency</span>
+                  <span class="sc-num">74</span>
+                </div>
+                <div class="sc-bar"><div class="sc-fill" style="width:74%"></div></div>
               </div>
             </div>
           </div>
         </div>
         <div class="ft r">
-          <p class="f-num">02 — Five agents, one loop</p>
-          <h2>A full product team that never sleeps.</h2>
-          <p>Five specialised AI agents work in sequence, each passing findings downstream. What used to require weeks of cross-functional effort — research, design, testing, engineering — now runs end-to-end without a single handoff.</p>
+          <p class="f-num">02 — Multi-dimensional scoring</p>
+          <h2>A score for every dimension that matters.</h2>
+          <p>Like Grammarly for your product experience. Savory evaluates your interface across five criteria — behavioural patterns, visual clarity, conversion impact, accessibility, and flow efficiency — so you know exactly what to fix and why.</p>
         </div>
       </div>
 
