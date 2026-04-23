@@ -16,11 +16,11 @@
     :root {
       --f:  'Inter', -apple-system, sans-serif;
       --fh: 'ABC Diatype', 'Inter', -apple-system, sans-serif;
-      --bg: #07070f;
+      --bg: #090909;
       --w:  #ffffff;
-      --g1: #d8d8e8;
-      --g2: #7a7a96;
-      --g3: #30303e;
+      --g1: #d6d6d6;
+      --g2: #787878;
+      --g3: #2e2e2e;
       --bd: rgba(255,255,255,0.06);
     }
 
@@ -36,13 +36,13 @@
       line-height: 1.6;
     }
 
-    /* Ambient glow — warm red/orange */
+    /* Ambient glow — Raycast-style warm red, centered, subtle */
     body::before {
       content: '';
       position: fixed; inset: 0;
       background:
-        radial-gradient(ellipse 1000px 600px at 80% -10%, rgba(180,55,20,0.10) 0%, transparent 60%),
-        radial-gradient(ellipse 800px 700px at -10% 70%,  rgba(140,45,15,0.07) 0%, transparent 60%);
+        radial-gradient(ellipse 900px 700px at 50% 40%, rgba(180,30,20,0.13) 0%, transparent 65%),
+        radial-gradient(ellipse 500px 400px at 50% 38%, rgba(210,50,30,0.07) 0%, transparent 55%);
       pointer-events: none;
       z-index: 0;
     }
@@ -68,7 +68,7 @@
       padding: 0 56px; height: 60px;
       backdrop-filter: blur(18px) saturate(1.4);
       -webkit-backdrop-filter: blur(18px) saturate(1.4);
-      background: rgba(7,7,15,0.8);
+      background: rgba(9,9,9,0.82);
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .nav-logo {
@@ -185,7 +185,7 @@
     /* ── PRODUCT MOCKUP ── */
     .mockup {
       width: 100%; max-width: 720px;
-      background: #0c0c18;
+      background: #111111;
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 12px;
       overflow: hidden;
@@ -198,7 +198,7 @@
     .mk-bar {
       display: flex; align-items: center; gap: 7px;
       padding: 11px 16px;
-      background: #090914;
+      background: #0d0d0d;
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .mk-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.09); }
