@@ -75,36 +75,73 @@
       font-size: 14.5px; font-weight: 500; letter-spacing: -0.3px;
       color: rgba(255,255,255,0.9);
     }
-    .nav-pill {
+    .nav-cta {
+      font-size: 13px; font-weight: 400;
+      color: var(--g2); text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-cta:hover { color: var(--w); }
+
+    /* ── HERO PILL (Raycast-style) ── */
+    .hero-pill {
       display: inline-flex; align-items: center;
       border-radius: 99px;
-      border: 1px solid rgba(255,255,255,0.09);
-      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(200,80,30,0.35);
+      background: rgba(255,255,255,0.03);
       text-decoration: none; overflow: hidden;
-      font-size: 12.5px; font-weight: 400;
-      transition: border-color .18s, background .18s, box-shadow .18s;
-      box-shadow: 0 0 0 0 rgba(200,80,30,0);
+      font-size: 13px; font-weight: 400;
+      margin-bottom: 80px;
+      position: relative;
+      transition: border-color .22s, background .22s, box-shadow .22s;
+      box-shadow:
+        0 0 18px -4px rgba(200,70,20,0.0),
+        inset 0 0 0 0 rgba(200,70,20,0);
     }
-    .nav-pill:hover {
-      border-color: rgba(200,80,30,0.45);
-      background: rgba(255,255,255,0.055);
-      box-shadow: 0 0 14px 0 rgba(200,80,30,0.14);
+    .hero-pill::before {
+      content: '';
+      position: absolute; inset: -1px;
+      border-radius: 99px;
+      background: conic-gradient(
+        from var(--a, 0deg),
+        rgba(200,80,30,0.0) 0deg,
+        rgba(220,100,40,0.55) 60deg,
+        rgba(200,80,30,0.0) 120deg
+      );
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: destination-out;
+      padding: 1px;
+      opacity: 0;
+      transition: opacity .25s;
+      animation: pillspin 2.8s linear infinite;
     }
-    .nav-pill-lbl {
-      padding: 5px 12px;
-      color: rgba(255,255,255,0.32);
-      letter-spacing: -0.15px;
+    @property --a { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+    @keyframes pillspin { to { --a: 360deg; } }
+    .hero-pill:hover::before { opacity: 1; }
+    .hero-pill:hover {
+      border-color: rgba(200,80,30,0.5);
+      background: rgba(255,255,255,0.045);
+      box-shadow: 0 0 22px -4px rgba(200,70,20,0.25);
     }
-    .nav-pill-div {
-      width: 1px; height: 14px;
-      background: rgba(255,255,255,0.1);
-      flex-shrink: 0;
-    }
-    .nav-pill-cta {
-      padding: 5px 13px;
-      color: rgba(255,255,255,0.7);
-      font-weight: 500;
+    .hero-pill-lbl {
+      padding: 8px 16px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
       letter-spacing: -0.2px;
+      position: relative; z-index: 1;
+    }
+    .hero-pill-div {
+      width: 1px; height: 16px;
+      background: rgba(255,255,255,0.12);
+      flex-shrink: 0;
+      position: relative; z-index: 1;
+    }
+    .hero-pill-cta {
+      padding: 8px 16px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: -0.15px;
+      position: relative; z-index: 1;
     }
 
     /* ── HERO ── */
@@ -144,25 +181,6 @@
       line-height: 1.65;
     }
 
-    .hero-btn {
-      display: inline-flex; align-items: center;
-      padding: 11px 22px;
-      border-radius: 7px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: transparent;
-      color: var(--g1);
-      font-size: 13.5px; font-weight: 400;
-      font-family: var(--f);
-      text-decoration: none; cursor: pointer;
-      letter-spacing: -0.15px;
-      transition: border-color .18s, color .18s, background .18s;
-      margin-bottom: 80px;
-    }
-    .hero-btn:hover {
-      border-color: rgba(255,255,255,0.35);
-      color: var(--w);
-      background: rgba(255,255,255,0.03);
-    }
 
     /* ── PRODUCT MOCKUP ── */
     .mockup {
@@ -460,11 +478,7 @@
     <!-- NAV -->
     <nav>
       <span class="nav-logo">savory</span>
-      <a href="#waitlist" class="nav-pill">
-        <span class="nav-pill-lbl">Introducing Savory</span>
-        <span class="nav-pill-div"></span>
-        <span class="nav-pill-cta">Join waitlist →</span>
-      </a>
+      <a href="#waitlist" class="nav-cta">Join waitlist →</a>
     </nav>
 
     <!-- HERO -->
@@ -472,7 +486,11 @@
       <p class="hero-label r">UX evolution engine</p>
       <h1 class="r">Your interface,<br>continuously evolving.</h1>
       <p class="hero-sub r">AI agents analyse real user behaviour, design better flows, and ship the winner — automatically.</p>
-      <a href="#waitlist" class="hero-btn r">Join the waitlist</a>
+      <a href="#waitlist" class="hero-pill r">
+        <span class="hero-pill-lbl">Introducing Savory</span>
+        <span class="hero-pill-div"></span>
+        <span class="hero-pill-cta">Join waitlist →</span>
+      </a>
 
       <!-- Product mockup -->
       <div class="mockup r">
