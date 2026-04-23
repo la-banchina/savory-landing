@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), -apple-system, sans-serif;
+  --font-heading: "ABC Diatype", var(--font-inter), -apple-system, sans-serif;
+
+  --color-bg: #090909;
+  --color-fg: #ffffff;
+  --color-g1: #d6d6d6;
+  --color-g2: #787878;
+  --color-g3: #2e2e2e;
+}
+
+@font-face {
+  font-family: "ABC Diatype";
+  src: local("ABCDiatype-Regular"), local("ABC Diatype Regular");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ABC Diatype";
+  src: local("ABCDiatype-Medium"), local("ABC Diatype Medium");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@property --a {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(
+        ellipse 900px 700px at 50% 40%,
+        rgba(180, 30, 20, 0.13) 0%,
+        transparent 65%
+      ),
+      radial-gradient(
+        ellipse 500px 400px at 50% 38%,
+        rgba(210, 50, 30, 0.07) 0%,
+        transparent 55%
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+@layer components {
+  /* Cursor glow */
+  .cursor-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(180, 70, 20, 0.04) 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    transition: left 0.12s linear, top 0.12s linear;
+  }
+
+  /* Hero pill with animated conic border on hover */
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 99px;
+    border: 1px solid rgba(200, 80, 30, 0.35);
+    background: rgba(255, 255, 255, 0.03);
+    text-decoration: none;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 400;
+    margin-bottom: 80px;
+    position: relative;
+    transition: border-color 0.22s, background 0.22s, box-shadow 0.22s;
+    box-shadow:
+      0 0 18px -4px rgba(200, 70, 20, 0),
+      inset 0 0 0 0 rgba(200, 70, 20, 0);
+  }
+  .hero-pill::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 99px;
+    background: conic-gradient(
+      from var(--a, 0deg),
+      rgba(200, 80, 30, 0) 0deg,
+      rgba(220, 100, 40, 0.55) 60deg,
+      rgba(200, 80, 30, 0) 120deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    padding: 1px;
+    opacity: 0;
+    transition: opacity 0.25s;
+    animation: pillspin 2.8s linear infinite;
+  }
+  .hero-pill:hover::before {
+    opacity: 1;
+  }
+  .hero-pill:hover {
+    border-color: rgba(200, 80, 30, 0.5);
+    background: rgba(255, 255, 255, 0.045);
+    box-shadow: 0 0 22px -4px rgba(200, 70, 20, 0.25);
+  }
+
+  /* Reveal animation */
+  .r {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .r.in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pillspin {
+  to {
+    --a: 360deg;
+  }
+}
+@keyframes pu {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes pf {
+  from {
+    width: 46%;
+  }
+  to {
+    width: 74%;
+  }
+}
+
+.animate-pu {
+  animation: pu 2.4s ease-in-out infinite;
+}
+.animate-pf {
+  animation: pf 3.8s ease-in-out infinite alternate;
+}

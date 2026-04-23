@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m http.server 8000)",
+      "Bash(npx --yes create-t3-app@latest savory-t3 --CI --tailwind --appRouter --noGit --noInstall)",
+      "Bash(shopt -s dotglob)",
+      "Bash(setopt dotglob *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -sf http://localhost:3000 -o /dev/null)",
+      "Bash(curl -s -o /tmp/savory-resp.html -w 'HTTP %{http_code}\\\\n' http://localhost:3002/)",
+      "Read(//tmp/**)",
+      "Bash(npx tsc *)",
+      "Read(//private/tmp/**)"
+    ]
+  }
+}
